@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using SdlApplication.Clipping;
 using SdlApplication.Extension;
 using SDL2;
 
@@ -8,8 +9,8 @@ namespace SdlApplication.Figure
 {
     public abstract class GenericFigure
     {
-        private readonly int _moveStep = 5;
-        private readonly double _rotationStep = 2 * Math.PI / 50;
+        private readonly int _moveStep = 25;
+        private readonly double _rotationStep = 2 * Math.PI / 10;
 
         private Point _center;
         private double _rotationAngle;
@@ -42,9 +43,104 @@ namespace SdlApplication.Figure
 
                 SDL.SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-                foreach (var line in plane.NotVisiblePartsParts)
+                foreach (var line in plane.NotVisibleParts)
                 {
                     SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
+                }
+            }
+        }
+
+        public void ClipByPolygon(GenericFigure polygon, ClippingType type)
+        {
+            foreach (FigurePlane plane in _planes)
+            {
+                var visibleParts = plane.VisibleParts.ToArray();
+                plane.VisibleParts.Clear();
+
+                foreach (var visiblePart in visibleParts)
+                {
+                    ClippingResult result = ClippingService.ClipLineByPolygon(visiblePart, polygon);
+                    int dx = visiblePart.End.X - visiblePart.Start.X;
+                    int dy = visiblePart.End.Y - visiblePart.Start.Y;
+
+                    if (result.Status == LineStatus.OutsideFully)
+                    {
+                        if (type == ClippingType.Inside)
+                        {
+                            plane.NotVisibleParts.Add(visiblePart);
+                        }
+                        else if (type == ClippingType.External)
+                        {
+                            plane.VisibleParts.Add(visiblePart);
+                        }
+                    }
+                    else if (result.Status == LineStatus.InsideFullyOrPartial)
+                    {
+                        if ((result.t0 == 0) && (result.t1 != 1))
+                        {
+                            var crossPoint = new Point
+                            {
+                                X = (int) Math.Round(visiblePart.Start.X + dx * result.t1),
+                                Y = (int) Math.Round(visiblePart.Start.Y + dy * result.t1),
+                            };
+
+                            if (type == ClippingType.Inside)
+                            {
+                                plane.VisibleParts.Add((visiblePart.Start, crossPoint));
+                                plane.NotVisibleParts.Add((crossPoint, visiblePart.End));
+                            }
+                            else if (type == ClippingType.External)
+                            {
+                                plane.NotVisibleParts.Add((visiblePart.Start, crossPoint));
+                                plane.VisibleParts.Add((crossPoint, visiblePart.End));
+                            }
+                        }
+                        else if ((result.t0 != 0) && (result.t1 == 1))
+                        {
+                            var crossPoint = new Point
+                            {
+                                X = (int) Math.Round(visiblePart.Start.X + dx * result.t0),
+                                Y = (int) Math.Round(visiblePart.Start.Y + dy * result.t0),
+                            };
+
+                            if (type == ClippingType.Inside)
+                            {
+                                plane.VisibleParts.Add((crossPoint, visiblePart.End));
+                                plane.NotVisibleParts.Add((visiblePart.Start, crossPoint));
+                            }
+                            else if (type == ClippingType.External)
+                            {
+                                plane.NotVisibleParts.Add((crossPoint, visiblePart.End));
+                                plane.VisibleParts.Add((visiblePart.Start, crossPoint));
+                            }
+                        }
+                        else
+                        {
+                            var crossPoint1 = new Point
+                            {
+                                X = (int)Math.Round(visiblePart.Start.X + dx * result.t0),
+                                Y = (int)Math.Round(visiblePart.Start.Y + dy * result.t0),
+                            };
+                            var crossPoint2 = new Point
+                            {
+                                X = (int)Math.Round(visiblePart.Start.X + dx * result.t1),
+                                Y = (int)Math.Round(visiblePart.Start.Y + dy * result.t1),
+                            };
+
+                            if (type == ClippingType.Inside)
+                            {
+                                plane.VisibleParts.Add((crossPoint1, crossPoint2));
+                                plane.NotVisibleParts.Add((visiblePart.Start, crossPoint1));
+                                plane.NotVisibleParts.Add((crossPoint2, visiblePart.End));
+                            }
+                            else if (type == ClippingType.External)
+                            {
+                                plane.NotVisibleParts.Add((crossPoint1, crossPoint2));
+                                plane.VisibleParts.Add((visiblePart.Start, crossPoint1));
+                                plane.VisibleParts.Add((crossPoint2, visiblePart.End));
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -120,7 +216,15 @@ namespace SdlApplication.Figure
             List<double> planeVector = _planes[planeInd].Start.VectorTo(_planes[planeInd].End);
             List<double> testVector = _planes[planeInd].Start.VectorTo(_planes[nextPlaneId].End);
             List<double> planeInsideNormalVector = new List<double>();
-            planeInsideNormalVector.AddRange(new[] { -planeVector[1] / planeVector[0], 1 });
+
+            if (planeVector[0] != 0)
+            {
+                planeInsideNormalVector.AddRange(new[] { -planeVector[1] / planeVector[0], 1 });
+            }
+            else
+            {
+                planeInsideNormalVector.AddRange(new[] { 1D, 0 });
+            }
 
             if (planeInsideNormalVector.ScalarMultiplicationWith(testVector) < 0)
             {

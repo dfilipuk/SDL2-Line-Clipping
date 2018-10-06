@@ -2,7 +2,7 @@
 {
     public enum LineStatus
     {
-        Visible,
-        NotVisible
+        InsideFullyOrPartial,
+        OutsideFully
     }
 }

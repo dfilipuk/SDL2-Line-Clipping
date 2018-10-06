@@ -10,7 +10,7 @@ namespace SdlApplication.Figure
         public Point End { get; }
 
         public List<(Point Start, Point End)> VisibleParts { get; }
-        public List<(Point Start, Point End)> NotVisiblePartsParts { get; }
+        public List<(Point Start, Point End)> NotVisibleParts { get; }
 
         public FigurePlane(Point start, Point end, int number)
         {
@@ -18,7 +18,7 @@ namespace SdlApplication.Figure
             End = end;
             PlaneNumber = number;
             VisibleParts = new List<(Point Start, Point End)>();
-            NotVisiblePartsParts = new List<(Point Start, Point End)>();
+            NotVisibleParts = new List<(Point Start, Point End)>();
             VisibleParts.Add((Start, End));
         }
     }
