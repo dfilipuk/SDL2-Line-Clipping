@@ -17,14 +17,6 @@ namespace SdlApplication.Figure
             CalculateCurrentPosition();
         }
 
-        public override void Draw(IntPtr renderer)
-        {
-            foreach (FigurePlane plane in _planes)
-            {
-                SDL.SDL_RenderDrawLine(renderer, plane.Start.X, plane.Start.Y, plane.End.X, plane.End.Y);
-            }
-        }
-
         protected override void InitializeVertexes()
         {
             int halfWidth = _width / 2;
@@ -53,11 +45,6 @@ namespace SdlApplication.Figure
                     Y = halfHeight
                 },
             });
-
-            for (int i = 0; i < _initialVertexes.Count; i++)
-            {
-                _planes.Add(new FigurePlane() { PlaneNumber = i });
-            }
         }
     }
 }

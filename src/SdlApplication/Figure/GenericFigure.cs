@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using SdlApplication.Extension;
+using SDL2;
 
 namespace SdlApplication.Figure
 {
@@ -28,7 +29,25 @@ namespace SdlApplication.Figure
 
         protected abstract void InitializeVertexes();
 
-        public abstract void Draw(IntPtr renderer);
+        public virtual void Draw(IntPtr renderer)
+        {
+            foreach (FigurePlane plane in _planes)
+            {
+                SDL.SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+
+                foreach (var line in plane.VisibleParts)
+                {
+                    SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
+                }
+
+                SDL.SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+
+                foreach (var line in plane.NotVisiblePartsParts)
+                {
+                    SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
+                }
+            }
+        }
 
         public IEnumerable<FigurePlane> Planes()
         {
@@ -52,12 +71,14 @@ namespace SdlApplication.Figure
         {
             int vertexesCount = _initialVertexes.Count;
             _normalInsideVectors.Clear();
+            _planes.Clear();
 
             for (int i = 0; i < vertexesCount; i++)
             {
                 int nextVertexInd = (i + 1) % vertexesCount;
-                _planes[i].Start = _initialVertexes[i].RotateAndMove(_rotationAngle, _center);
-                _planes[i].End = _initialVertexes[nextVertexInd].RotateAndMove(_rotationAngle, _center);
+                Point start = _initialVertexes[i].RotateAndMove(_rotationAngle, _center);
+                Point end = _initialVertexes[nextVertexInd].RotateAndMove(_rotationAngle, _center);
+                _planes.Add(new FigurePlane(start, end, i));
             }
         }
 
