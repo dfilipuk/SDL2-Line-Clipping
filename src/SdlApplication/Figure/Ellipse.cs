@@ -29,15 +29,16 @@ namespace SdlApplication.Figure
         protected override void InitializeVertexes()
         {
             double step = 2 * Math.PI / _vertexesCount;
+            double angle = 2 * Math.PI;
 
-            for (double angle = 2 * Math.PI, i = 0; i < _vertexesCount; i++, angle -= step)
+            for (int i = 0; i < _vertexesCount; i++, angle -= step)
             {
                 _initialVertexes.Add(new Point
                 {
                     X = (int) Math.Round(_a * Math.Cos(angle)),
                     Y = (int) Math.Round(_b * Math.Sin(angle)),
                 });
-                _planes.Add(new FigurePlane());
+                _planes.Add(new FigurePlane() { PlaneNumber = i });
             }
         }
     }

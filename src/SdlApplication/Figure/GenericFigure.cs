@@ -30,6 +30,14 @@ namespace SdlApplication.Figure
 
         public abstract void Draw(IntPtr renderer);
 
+        public IEnumerable<FigurePlane> Planes()
+        {
+            foreach (FigurePlane plane in _planes)
+            {
+                yield return plane;
+            }
+        }
+
         public List<double> GetNormalInsideVectorForPlane(int planeIndex)
         {
             if (!_normalInsideVectors.ContainsKey(planeIndex))
