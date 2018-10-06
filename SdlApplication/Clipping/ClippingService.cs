@@ -10,41 +10,38 @@ namespace SdlApplication.Clipping
     {
         private static readonly double _precision = 0.00001;
 
-        public static ClippingResult ClipLineByPolygon(Point v0, Point v1, GenericFigure polygon)
+        public static ClippingResult ClipLineByPolygon((Point Start, Point End) line, GenericFigure polygon)
         {
             var result = new ClippingResult();
-            List<double> lineVector = v0.VectorTo(v1);
+            List<double> lineVector = line.Start.VectorTo(line.End);
 
             foreach (FigurePlane plane in polygon.Planes())
             {
-                if (result.Status == LineStatus.Visible)
+                if (result.Status == LineStatus.InsideFullyOrPartial)
                 {
                     List<double> insideNormalVector = polygon.GetNormalInsideVectorForPlane(plane.PlaneNumber);
-                    List<double> wVector = plane.Start.VectorTo(v0);
+                    List<double> wVector = plane.Start.VectorTo(line.Start);
                     double q = insideNormalVector.ScalarMultiplicationWith(wVector);
                     double p = insideNormalVector.ScalarMultiplicationWith(lineVector);
 
                     if (Math.Abs(p) <= _precision)
                     {
-                        if (Math.Abs(q) <= _precision)
+                        if (q < 0)
                         {
-                            result.Status = LineStatus.NotVisible;
+                            result.Status = LineStatus.OutsideFully;
                         }
                     }
                     else
                     {
                         double t = -q / p;
 
-                        if ((t >= 0) && (t <= 1))
+                        if ((p < 0) && (t > result.t0) && (t < result.t1))
                         {
-                            if ((p < 0) && (t > result.t0) && (t < result.t1))
-                            {
-                                result.t1 = t;
-                            }
-                            if ((p > 0) && (t > result.t0) && (t < result.t1))
-                            {
-                                result.t0 = t;
-                            }
+                            result.t1 = t;
+                        }
+                        if ((p > 0) && (t > result.t0) && (t < result.t1))
+                        {
+                            result.t0 = t;
                         }
                     }
                 }

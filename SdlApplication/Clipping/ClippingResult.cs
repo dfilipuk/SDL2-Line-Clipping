@@ -8,7 +8,7 @@
 
         public ClippingResult()
         {
-            Status = LineStatus.Visible;
+            Status = LineStatus.InsideFullyOrPartial;
             t0 = 0;
             t1 = 1;
         }

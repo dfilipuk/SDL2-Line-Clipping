@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using SdlApplication.Clipping;
 using SdlApplication.Figure;
 using SDL2;
 
@@ -53,10 +54,17 @@ namespace SdlApplication.Window
             int width, height;
             SDL.SDL_GetWindowSize(_window, out width, out height);
 
-            _rectangle = new Rectangle(width / 2, height / 2, 0, width - 60, height - 60);
+            _rectangle = new Rectangle(width / 2, height / 2, 0, width - 300, height - 300);
             _trapeze = new Trapeze(100, height / 2, 0, 200, 100);
             _ellipse = new Ellipse(width - 100, height / 2, 0, 100, 50);
             _currentFigure = _trapeze;
+            PerformClipping();
+        }
+
+        private void PerformClipping()
+        {
+            _trapeze.ClipByPolygon(_rectangle, ClippingType.Inside);
+            _ellipse.ClipByPolygon(_rectangle, ClippingType.Inside);
         }
 
         private void WindowProcedure()
@@ -81,26 +89,32 @@ namespace SdlApplication.Window
                             case SDL.SDL_Keycode.SDLK_w:
                                 _currentFigure.Move(MoveDirection.Up);
                                 _currentFigure.CalculateCurrentPosition();
+                                PerformClipping();
                                 break;
                             case SDL.SDL_Keycode.SDLK_a:
                                 _currentFigure.Move(MoveDirection.Left);
                                 _currentFigure.CalculateCurrentPosition();
+                                PerformClipping();
                                 break;
                             case SDL.SDL_Keycode.SDLK_s:
                                 _currentFigure.Move(MoveDirection.Down);
                                 _currentFigure.CalculateCurrentPosition();
+                                PerformClipping();
                                 break;
                             case SDL.SDL_Keycode.SDLK_d:
                                 _currentFigure.Move(MoveDirection.Right);
                                 _currentFigure.CalculateCurrentPosition();
+                                PerformClipping();
                                 break;
                             case SDL.SDL_Keycode.SDLK_q:
                                 _currentFigure.Rotate(RotateDirection.Left);
                                 _currentFigure.CalculateCurrentPosition();
+                                PerformClipping();
                                 break;
                             case SDL.SDL_Keycode.SDLK_e:
                                 _currentFigure.Rotate(RotateDirection.Right);
                                 _currentFigure.CalculateCurrentPosition();
+                                PerformClipping();
                                 break;
                             case SDL.SDL_Keycode.SDLK_1:
                                 _currentFigure = _trapeze;

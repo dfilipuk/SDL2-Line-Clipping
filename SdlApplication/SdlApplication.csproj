@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Clipping\ClippingResult.cs" />
     <Compile Include="Clipping\ClippingService.cs" />
+    <Compile Include="Clipping\ClippingType.cs" />
     <Compile Include="Clipping\LineStatus.cs" />
     <Compile Include="Extension\AffineTransformation.cs" />
     <Compile Include="Extension\VectorOperations.cs" />
