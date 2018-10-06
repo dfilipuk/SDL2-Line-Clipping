@@ -53,7 +53,11 @@ namespace SdlApplication.Figure
                     Y = halfHeight
                 },
             });
-            _planes.AddRange(new[] { new FigurePlane(), new FigurePlane(), new FigurePlane(), new FigurePlane() });
+
+            for (int i = 0; i < _initialVertexes.Count; i++)
+            {
+                _planes.Add(new FigurePlane() { PlaneNumber = i });
+            }
         }
     }
 }
