@@ -46,6 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extension\AffineTransformation.cs" />
+    <Compile Include="Figure\Ellipse.cs" />
+    <Compile Include="Figure\FigurePlane.cs" />
+    <Compile Include="Figure\GenericFigure.cs" />
+    <Compile Include="Figure\MoveDirection.cs" />
+    <Compile Include="Figure\Rectangle.cs" />
+    <Compile Include="Figure\RotateDirection.cs" />
+    <Compile Include="Figure\Trapeze.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
