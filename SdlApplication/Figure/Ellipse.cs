@@ -18,14 +18,6 @@ namespace SdlApplication.Figure
             CalculateCurrentPosition();
         }
 
-        public override void Draw(IntPtr renderer)
-        {
-            foreach (FigurePlane plane in _planes)
-            {
-                SDL.SDL_RenderDrawLine(renderer, plane.Start.X, plane.Start.Y, plane.End.X, plane.End.Y);
-            }
-        }
-
         protected override void InitializeVertexes()
         {
             double step = 2 * Math.PI / _vertexesCount;
@@ -38,7 +30,6 @@ namespace SdlApplication.Figure
                     X = (int) Math.Round(_a * Math.Cos(angle)),
                     Y = (int) Math.Round(_b * Math.Sin(angle)),
                 });
-                _planes.Add(new FigurePlane() { PlaneNumber = i });
             }
         }
     }
