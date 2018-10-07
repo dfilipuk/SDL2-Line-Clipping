@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using SdlApplication.Utils;
 using SDL2;
 
 namespace SdlApplication.Figure
@@ -15,6 +16,19 @@ namespace SdlApplication.Figure
             _height = height;
             InitializeVertexes();
             CalculateCurrentPosition();
+        }
+
+        public override void Draw(IntPtr renderer)
+        {
+            foreach (FigurePlane plane in _planes)
+            {
+                SDL.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+                foreach (var line in plane.VisibleParts)
+                {
+                    SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
+                }
+            }
         }
 
         protected override void InitializeVertexes()
