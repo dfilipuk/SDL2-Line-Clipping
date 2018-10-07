@@ -61,6 +61,14 @@ namespace SdlApplication.Window
             PerformClipping();
         }
 
+        private void WindowSizeChanged()
+        {
+            int width, height;
+            SDL.SDL_GetWindowSize(_window, out width, out height);
+
+            _rectangle = new Rectangle(width / 2, height / 2, 0, width - 300, height - 300);
+        }
+
         private void PerformClipping()
         {
             _trapeze.ResetClipping();
@@ -82,6 +90,17 @@ namespace SdlApplication.Window
                     case SDL.SDL_EventType.SDL_QUIT:
                     {
                         exit = true;
+                        break;
+                    }
+                    case SDL.SDL_EventType.SDL_WINDOWEVENT:
+                    {
+                        switch (sdlEvent.window.windowEvent)
+                        {
+                            case SDL.SDL_WindowEventID.SDL_WINDOWEVENT_SIZE_CHANGED:
+                                WindowSizeChanged();
+                                PerformClipping();
+                                break;
+                        }
                         break;
                     }
                     case SDL.SDL_EventType.SDL_KEYDOWN:
