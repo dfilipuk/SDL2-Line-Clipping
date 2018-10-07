@@ -1,8 +1,9 @@
 ﻿namespace SdlApplication.Clipping
 {
-    public enum LineStatus
+    public enum LinePosition
     {
-        InsideFullyOrPartial,
+        InsidePartial,
+        InsideFully,
         OutsideFully
     }
 }

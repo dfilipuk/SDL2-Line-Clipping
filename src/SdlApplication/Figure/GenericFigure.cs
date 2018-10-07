@@ -50,6 +50,37 @@ namespace SdlApplication.Figure
             }
         }
 
+        public PointPosition GetPointPosition(Point point)
+        {
+            PointPosition result = PointPosition.Inside;
+
+            for (int i = 0; i < _planes.Count && result == PointPosition.Inside; i++)
+            {
+                var testVector = point.VectorTo(_planes[i].Start);
+                var normalInsideVector = GetNormalInsideVectorForPlane(i);
+                double scalarMultiplication = testVector.ScalarMultiplicationWith(normalInsideVector);
+
+                if (scalarMultiplication > 0)
+                {
+                    result = PointPosition.Outside;
+                }
+                else if (scalarMultiplication == 0)
+                {
+                    result = PointPosition.OnPlane;
+                }
+            }
+
+            return result;
+        }
+
+        public void ResetClipping()
+        {
+            foreach (var plane in _planes)
+            {
+                plane.ResetClipping();
+            }
+        }
+
         public void ClipByPolygon(GenericFigure polygon, ClippingType type)
         {
             foreach (FigurePlane plane in _planes)
@@ -60,10 +91,8 @@ namespace SdlApplication.Figure
                 foreach (var visiblePart in visibleParts)
                 {
                     ClippingResult result = ClippingService.ClipLineByPolygon(visiblePart, polygon);
-                    int dx = visiblePart.End.X - visiblePart.Start.X;
-                    int dy = visiblePart.End.Y - visiblePart.Start.Y;
 
-                    if (result.Status == LineStatus.OutsideFully)
+                    if (result.Position == LinePosition.OutsideFully)
                     {
                         if (type == ClippingType.Inside)
                         {
@@ -74,15 +103,22 @@ namespace SdlApplication.Figure
                             plane.VisibleParts.Add(visiblePart);
                         }
                     }
-                    else if (result.Status == LineStatus.InsideFullyOrPartial)
+                    else if (result.Position == LinePosition.InsideFully)
+                    {
+                        if (type == ClippingType.Inside)
+                        {
+                            plane.VisibleParts.Add(visiblePart);
+                        }
+                        else if (type == ClippingType.External)
+                        {
+                            plane.NotVisibleParts.Add(visiblePart);
+                        }
+                    }
+                    else if (result.Position == LinePosition.InsidePartial)
                     {
                         if ((result.t0 == 0) && (result.t1 != 1))
                         {
-                            var crossPoint = new Point
-                            {
-                                X = (int) Math.Round(visiblePart.Start.X + dx * result.t1),
-                                Y = (int) Math.Round(visiblePart.Start.Y + dy * result.t1),
-                            };
+                            var crossPoint = result.t1.GetLinePoint(visiblePart);
 
                             if (type == ClippingType.Inside)
                             {
@@ -97,11 +133,7 @@ namespace SdlApplication.Figure
                         }
                         else if ((result.t0 != 0) && (result.t1 == 1))
                         {
-                            var crossPoint = new Point
-                            {
-                                X = (int) Math.Round(visiblePart.Start.X + dx * result.t0),
-                                Y = (int) Math.Round(visiblePart.Start.Y + dy * result.t0),
-                            };
+                            var crossPoint = result.t0.GetLinePoint(visiblePart);
 
                             if (type == ClippingType.Inside)
                             {
@@ -116,16 +148,8 @@ namespace SdlApplication.Figure
                         }
                         else
                         {
-                            var crossPoint1 = new Point
-                            {
-                                X = (int)Math.Round(visiblePart.Start.X + dx * result.t0),
-                                Y = (int)Math.Round(visiblePart.Start.Y + dy * result.t0),
-                            };
-                            var crossPoint2 = new Point
-                            {
-                                X = (int)Math.Round(visiblePart.Start.X + dx * result.t1),
-                                Y = (int)Math.Round(visiblePart.Start.Y + dy * result.t1),
-                            };
+                            var crossPoint1 = result.t0.GetLinePoint(visiblePart);
+                            var crossPoint2 = result.t1.GetLinePoint(visiblePart);
 
                             if (type == ClippingType.Inside)
                             {
