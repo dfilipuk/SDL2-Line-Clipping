@@ -18,6 +18,34 @@ namespace SdlApplication.Figure
             CalculateCurrentPosition();
         }
 
+        public override void Draw(IntPtr renderer)
+        {
+            bool drawCurrentNotVisiblePlane = true;
+
+            foreach (FigurePlane plane in _planes)
+            {
+                SDL.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+
+                foreach (var line in plane.VisibleParts)
+                {
+                    SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
+                    drawCurrentNotVisiblePlane = true;
+                }
+
+                if (plane.VisibleParts.Count == 0)
+                {
+                    if (drawCurrentNotVisiblePlane)
+                    {
+                        foreach (var line in plane.NotVisibleParts)
+                        {
+                            SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
+                        }
+                    }
+                    drawCurrentNotVisiblePlane = !drawCurrentNotVisiblePlane;
+                }
+            }
+        }
+
         protected override void InitializeVertexes()
         {
             double step = 2 * Math.PI / _vertexesCount;
