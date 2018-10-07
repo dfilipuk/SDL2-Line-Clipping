@@ -14,19 +14,22 @@ namespace SdlApplication.Figure
         private readonly double _rotationStep = 2 * Math.PI / 10;
 
         private Point _center;
+        private Point _minPoint;
+        private Point _maxPoint;
         private double _rotationAngle;
 
         protected List<FigurePlane> _planes;
         protected List<Point> _initialVertexes;
         protected Dictionary<int, List<double>> _normalInsideVectors;
 
-        public GenericFigure(int centerX, int centerY, double angle)
+        public GenericFigure(int centerX, int centerY, double angle, int minX, int maxX, int minY, int maxY)
         {
             _center = new Point(centerX, centerY);
             _rotationAngle = angle;
             _planes = new List<FigurePlane>();
             _initialVertexes = new List<Point>();
             _normalInsideVectors = new Dictionary<int, List<double>>();
+            SetMovementBorders(minX, maxX, minY, maxY);
         }
 
         protected abstract void InitializeVertexes();
@@ -223,23 +226,51 @@ namespace SdlApplication.Figure
             }
         }
 
-        public void Move(MoveDirection direction)
+        public bool Move(MoveDirection direction)
         {
             switch (direction)
             {
                 case MoveDirection.Up:
-                    _center.Y -= _moveStep;
+                    return MoveTo(_center.X, _center.Y - _moveStep);
                     break;
                 case MoveDirection.Right:
-                    _center.X += _moveStep;
+                    return MoveTo(_center.X + _moveStep, _center.Y);
                     break;
                 case MoveDirection.Down:
-                    _center.Y += _moveStep;
+                    return MoveTo(_center.X, _center.Y + _moveStep);
                     break;
                 case MoveDirection.Left:
-                    _center.X -= _moveStep;
+                    return MoveTo(_center.X - _moveStep, _center.Y);
                     break;
+                default:
+                    return false;
             }
+        }
+
+        public bool MoveTo(int x, int y)
+        {
+            if (x >= _minPoint.X && x <= _maxPoint.X && y >= _minPoint.Y && y <= _maxPoint.Y)
+            {
+                _center.X = x;
+                _center.Y = y;
+                return true;
+            }
+
+            return false;
+        }
+
+        public void SetMovementBorders(int minX, int maxX, int minY, int maxY)
+        {
+            _minPoint = new Point
+            {
+                X = minX,
+                Y = minY
+            };
+            _maxPoint = new Point
+            {
+                X = maxX,
+                Y = maxY
+            };
         }
 
         private void CalculateNormalInsideVectorForPlane(int planeInd)

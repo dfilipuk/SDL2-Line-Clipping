@@ -10,7 +10,8 @@ namespace SdlApplication.Figure
         private readonly int _a;
         private readonly int _b;
 
-        public Ellipse(int centerX, int centerY, double angle, int a, int b) : base(centerX, centerY, angle)
+        public Ellipse(int centerX, int centerY, double angle, int minX, int maxX, int minY, int maxY, int a, int b) 
+            : base(centerX, centerY, angle, minX, maxX, minY, maxY)
         {
             _a = a;
             _b = b;

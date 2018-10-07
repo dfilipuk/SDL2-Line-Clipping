@@ -9,6 +9,8 @@ namespace SdlApplication.Window
     public class SdlWindow
     {
         private readonly int _renderLoopTimeoutMs = 10;
+        private readonly int _offsetFromBorders = 30;
+        private readonly double _defaultRotationAngle = 0;
 
         private readonly int _screenWidth;
         private readonly int _screenHeight;
@@ -54,9 +56,21 @@ namespace SdlApplication.Window
             int width, height;
             SDL.SDL_GetWindowSize(_window, out width, out height);
 
-            _rectangle = new Rectangle(width / 2, height / 2, 0, width - 300, height - 300);
-            _trapeze = new Trapeze(115, height / 2 + 15, 0, 200, 100);
-            _ellipse = new Ellipse(width - 100, height / 2, 0, 100, 57);
+            _rectangle = new Rectangle(
+                width / 2, height / 2, _defaultRotationAngle, 
+                _offsetFromBorders, width - _offsetFromBorders, _offsetFromBorders, height - _offsetFromBorders, 
+                width - 300, height - 300
+            );
+            _trapeze = new Trapeze(
+                115, height / 2 + 15, _defaultRotationAngle, 
+                _offsetFromBorders, width - _offsetFromBorders, _offsetFromBorders, height - _offsetFromBorders, 
+                200, 100
+            );
+            _ellipse = new Ellipse(
+                width - 100, height / 2, _defaultRotationAngle, 
+                _offsetFromBorders, width - _offsetFromBorders, _offsetFromBorders, height - _offsetFromBorders, 
+                100, 57
+            );
             _currentFigure = _trapeze;
             PerformClipping();
         }
@@ -66,7 +80,17 @@ namespace SdlApplication.Window
             int width, height;
             SDL.SDL_GetWindowSize(_window, out width, out height);
 
-            _rectangle = new Rectangle(width / 2, height / 2, 0, width - 300, height - 300);
+            _rectangle = new Rectangle(
+                width / 2, height / 2, _defaultRotationAngle,
+                _offsetFromBorders, width - _offsetFromBorders, _offsetFromBorders, height - _offsetFromBorders, 
+                width - 300, height - 300
+            );
+            _trapeze.SetMovementBorders(
+                _offsetFromBorders, width - _offsetFromBorders, _offsetFromBorders, height - _offsetFromBorders
+            );
+            _ellipse.SetMovementBorders(
+                _offsetFromBorders, width - _offsetFromBorders, _offsetFromBorders, height - _offsetFromBorders
+            );
         }
 
         private void PerformClipping()
@@ -144,19 +168,16 @@ namespace SdlApplication.Window
                             case SDL.SDL_Keycode.SDLK_2:
                                 _currentFigure = _ellipse;
                                 break;
-                            }
+                        }
                         break;
                     }
                     case SDL.SDL_EventType.SDL_MOUSEBUTTONDOWN:
                     {
                         if (sdlEvent.button.button == SDL.SDL_BUTTON_LEFT)
                         {
-                            // do smth
-                        }
-                        else
-                        if (sdlEvent.button.button == SDL.SDL_BUTTON_RIGHT)
-                        {
-                            // do smth
+                            _currentFigure.MoveTo(sdlEvent.button.x, sdlEvent.button.y);
+                            _currentFigure.CalculateCurrentPosition();
+                            PerformClipping();
                         }
                         break;
                     }
