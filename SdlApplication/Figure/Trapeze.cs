@@ -12,7 +12,8 @@ namespace SdlApplication.Figure
         private readonly int _height;
         private readonly Drawer _drawer;
 
-        public Trapeze(int centerX, int centerY, double angle, int width, int height) : base(centerX, centerY, angle)
+        public Trapeze(int centerX, int centerY, double angle, int minX, int maxX, int minY, int maxY, int width, int height)
+            : base(centerX, centerY, angle, minX, maxX, minY, maxY)
         {
             _width = width;
             _height = height;

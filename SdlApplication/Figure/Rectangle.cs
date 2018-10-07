@@ -10,7 +10,8 @@ namespace SdlApplication.Figure
         private readonly int _width;
         private readonly int _height;
 
-        public Rectangle(int centerX, int centerY, double angle, int width, int height) : base(centerX, centerY, angle)
+        public Rectangle(int centerX, int centerY, double angle, int minX, int maxX, int minY, int maxY, int width, int height)
+            : base(centerX, centerY, angle, minX, maxX, minY, maxY)
         {
             _width = width;
             _height = height;
