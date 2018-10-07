@@ -10,8 +10,8 @@ namespace SdlApplication.Figure
     public abstract class GenericFigure
     {
         private readonly double _precision = 0.00001;
-        private readonly int _moveStep = 25;
-        private readonly double _rotationStep = 2 * Math.PI / 10;
+        private readonly int _moveStep = 5;
+        private readonly double _rotationStep = 2 * Math.PI / 30;
 
         private Point _center;
         private Point _minPoint;
@@ -271,6 +271,11 @@ namespace SdlApplication.Figure
                 X = maxX,
                 Y = maxY
             };
+
+            _center.X = _center.X < minX ? minX : _center.X;
+            _center.X = _center.X > maxX ? maxX : _center.X;
+            _center.Y = _center.Y < minX ? minY : _center.Y;
+            _center.Y = _center.Y > maxX ? maxY : _center.Y;
         }
 
         private void CalculateNormalInsideVectorForPlane(int planeInd)
