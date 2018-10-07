@@ -63,7 +63,10 @@ namespace SdlApplication.Window
 
         private void PerformClipping()
         {
+            _trapeze.ResetClipping();
+            _ellipse.ResetClipping();
             _trapeze.ClipByPolygon(_rectangle, ClippingType.Inside);
+            _trapeze.ClipByPolygon(_ellipse, ClippingType.External);
             _ellipse.ClipByPolygon(_rectangle, ClippingType.Inside);
         }
 

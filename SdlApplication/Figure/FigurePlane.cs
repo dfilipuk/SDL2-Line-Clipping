@@ -19,6 +19,13 @@ namespace SdlApplication.Figure
             PlaneNumber = number;
             VisibleParts = new List<(Point Start, Point End)>();
             NotVisibleParts = new List<(Point Start, Point End)>();
+            ResetClipping();
+        }
+
+        public void ResetClipping()
+        {
+            VisibleParts.Clear();
+            NotVisibleParts.Clear();
             VisibleParts.Add((Start, End));
         }
     }

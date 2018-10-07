@@ -52,8 +52,10 @@
     <Compile Include="Clipping\ClippingResult.cs" />
     <Compile Include="Clipping\ClippingService.cs" />
     <Compile Include="Clipping\ClippingType.cs" />
-    <Compile Include="Clipping\LineStatus.cs" />
+    <Compile Include="Clipping\LinePosition.cs" />
+    <Compile Include="Clipping\PointPosition.cs" />
     <Compile Include="Extension\AffineTransformation.cs" />
+    <Compile Include="Extension\PointOperations.cs" />
     <Compile Include="Extension\VectorOperations.cs" />
     <Compile Include="Figure\Ellipse.cs" />
     <Compile Include="Figure\FigurePlane.cs" />
