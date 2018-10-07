@@ -11,7 +11,7 @@ namespace SdlApplication
         public Form1()
         {
             InitializeComponent();
-            _sdlWindow = new SdlWindow("SDL DEMO", 640, 480);
+            _sdlWindow = new SdlWindow("АКГ ЛР3", 1000, 700);
             _sdlWindow.Open();
         }
 

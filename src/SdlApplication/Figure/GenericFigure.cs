@@ -9,6 +9,7 @@ namespace SdlApplication.Figure
 {
     public abstract class GenericFigure
     {
+        private readonly double _precision = 0.00001;
         private readonly int _moveStep = 25;
         private readonly double _rotationStep = 2 * Math.PI / 10;
 
@@ -64,9 +65,16 @@ namespace SdlApplication.Figure
                 {
                     result = PointPosition.Outside;
                 }
-                else if (scalarMultiplication == 0)
+                else if (Math.Abs(scalarMultiplication) <= _precision)
                 {
-                    result = PointPosition.OnPlane;
+                    if (point.IsPointBelongToLine((_planes[i].Start, _planes[i].End)))
+                    {
+                        result = PointPosition.OnPlane;
+                    }
+                    else
+                    {
+                        result = PointPosition.Outside;
+                    }
                 }
             }
 

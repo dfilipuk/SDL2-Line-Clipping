@@ -55,8 +55,8 @@ namespace SdlApplication.Window
             SDL.SDL_GetWindowSize(_window, out width, out height);
 
             _rectangle = new Rectangle(width / 2, height / 2, 0, width - 300, height - 300);
-            _trapeze = new Trapeze(100, height / 2, 0, 200, 100);
-            _ellipse = new Ellipse(width - 100, height / 2, 0, 100, 50);
+            _trapeze = new Trapeze(115, height / 2 + 15, 0, 200, 100);
+            _ellipse = new Ellipse(width - 100, height / 2, 0, 100, 57);
             _currentFigure = _trapeze;
             PerformClipping();
         }
