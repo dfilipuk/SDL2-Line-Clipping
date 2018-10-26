@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace SdlApplication.Extension
 {
@@ -37,6 +38,17 @@ namespace SdlApplication.Extension
             {
                 vector[i] *= scalar;
             }
+        }
+
+        public static double AngleWith(this List<double> vector1, List<double> vector2)
+        {
+            double res = Math.Acos(vector1.ScalarMultiplicationWith(vector2) / (vector1.VectorLength() * vector2.VectorLength()));
+            return res;
+        }
+
+        public static double VectorLength(this List<double> vector)
+        {
+            return Math.Sqrt(vector.Sum(x => x * x));
         }
     }
 }
