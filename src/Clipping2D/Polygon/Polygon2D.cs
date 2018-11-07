@@ -45,9 +45,9 @@ namespace Clipping2D.Polygon
 
         public void ResetClipping()
         {
-            foreach (var plane in _edges)
+            foreach (var edge in _edges)
             {
-                plane.ResetClipping();
+                edge.ResetClipping();
             }
         }
 
@@ -139,14 +139,14 @@ namespace Clipping2D.Polygon
             }
         }
 
-        internal List<double> GetNormalInsideVectorForPlane(int planeIndex)
+        internal List<double> GetNormalInsideVectorForEdge(int edgeIndex)
         {
-            if (!_normalInsideVectors.ContainsKey(planeIndex))
+            if (!_normalInsideVectors.ContainsKey(edgeIndex))
             {
-                CalculateNormalInsideVectorForPlane(planeIndex);
+                CalculateNormalInsideVectorForEdge(edgeIndex);
             }
 
-            return _normalInsideVectors[planeIndex];
+            return _normalInsideVectors[edgeIndex];
         }
 
         internal PointPosition GetPointPosition(Point point)
@@ -156,7 +156,7 @@ namespace Clipping2D.Polygon
             for (int i = 0; i < _edges.Count && result == PointPosition.Inside; i++)
             {
                 var testVector = point.VectorTo(_edges[i].Start);
-                var normalInsideVector = GetNormalInsideVectorForPlane(i);
+                var normalInsideVector = GetNormalInsideVectorForEdge(i);
                 double scalarMultiplication = testVector.ScalarMultiplicationWith(normalInsideVector);
 
                 if (scalarMultiplication > 0)
@@ -167,7 +167,7 @@ namespace Clipping2D.Polygon
                 {
                     if (point.IsPointBelongToLine((_edges[i].Start, _edges[i].End)))
                     {
-                        result = PointPosition.OnPlane;
+                        result = PointPosition.OnEdge;
                     }
                     else
                     {
@@ -192,28 +192,28 @@ namespace Clipping2D.Polygon
             }
         }
 
-        private void CalculateNormalInsideVectorForPlane(int planeInd)
+        private void CalculateNormalInsideVectorForEdge(int edgeInd)
         {
-            int nextPlaneId = (planeInd + 1) % _initialVertexes.Count;
-            List<double> planeVector = _edges[planeInd].Start.VectorTo(_edges[planeInd].End);
-            List<double> testVector = _edges[planeInd].Start.VectorTo(_edges[nextPlaneId].End);
-            List<double> planeInsideNormalVector = new List<double>();
+            int nextEdgeId = (edgeInd + 1) % _initialVertexes.Count;
+            List<double> edgeVector = _edges[edgeInd].Start.VectorTo(_edges[edgeInd].End);
+            List<double> testVector = _edges[edgeInd].Start.VectorTo(_edges[nextEdgeId].End);
+            List<double> edgeInsideNormalVector = new List<double>();
 
-            if (planeVector[0] != 0)
+            if (edgeVector[0] != 0)
             {
-                planeInsideNormalVector.AddRange(new[] { -planeVector[1] / planeVector[0], 1 });
+                edgeInsideNormalVector.AddRange(new[] { -edgeVector[1] / edgeVector[0], 1 });
             }
             else
             {
-                planeInsideNormalVector.AddRange(new[] { 1D, 0 });
+                edgeInsideNormalVector.AddRange(new[] { 1D, 0 });
             }
 
-            if (planeInsideNormalVector.ScalarMultiplicationWith(testVector) < 0)
+            if (edgeInsideNormalVector.ScalarMultiplicationWith(testVector) < 0)
             {
-                planeInsideNormalVector.MultiplyByScalar(-1);
+                edgeInsideNormalVector.MultiplyByScalar(-1);
             }
 
-            _normalInsideVectors.Add(planeInd, planeInsideNormalVector);
+            _normalInsideVectors.Add(edgeInd, edgeInsideNormalVector);
         }
     }
 }

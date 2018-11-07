@@ -10,7 +10,7 @@ namespace SdlApplication.Drawer
     {
         public void Draw(IntPtr renderer, List<Edge2D> edges)
         {
-            bool drawCurrentNotVisiblePlane = true;
+            bool drawCurrentNotVisibleEdge = true;
 
             foreach (Edge2D edge in edges)
             {
@@ -19,19 +19,19 @@ namespace SdlApplication.Drawer
                 foreach (var line in edge.VisibleParts)
                 {
                     SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
-                    drawCurrentNotVisiblePlane = true;
+                    drawCurrentNotVisibleEdge = true;
                 }
 
                 if (edge.VisibleParts.Count == 0)
                 {
-                    if (drawCurrentNotVisiblePlane)
+                    if (drawCurrentNotVisibleEdge)
                     {
                         foreach (var line in edge.NotVisibleParts)
                         {
                             SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
                         }
                     }
-                    drawCurrentNotVisiblePlane = !drawCurrentNotVisiblePlane;
+                    drawCurrentNotVisibleEdge = !drawCurrentNotVisibleEdge;
                 }
             }
         }

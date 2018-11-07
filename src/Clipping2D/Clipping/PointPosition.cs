@@ -4,6 +4,6 @@
     {
         Inside,
         Outside,
-        OnPlane
+        OnEdge
     }
 }

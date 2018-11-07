@@ -20,7 +20,7 @@ namespace Clipping2D.Clipping
             {
                 if (result.Position != LinePosition.OutsideFully)
                 {
-                    List<double> insideNormalVector = polygon.GetNormalInsideVectorForPlane(edge.EdgeNumber);
+                    List<double> insideNormalVector = polygon.GetNormalInsideVectorForEdge(edge.EdgeNumber);
                     List<double> wVector = edge.Start.VectorTo(line.Start);
                     double q = insideNormalVector.ScalarMultiplicationWith(wVector);
                     double p = insideNormalVector.ScalarMultiplicationWith(lineVector);
@@ -68,16 +68,16 @@ namespace Clipping2D.Clipping
             PointPosition endPointPosition = polygon.GetPointPosition(line.End);
 
             if ((startPointPosition == PointPosition.Inside && endPointPosition == PointPosition.Inside)
-                || (startPointPosition == PointPosition.OnPlane && endPointPosition == PointPosition.OnPlane)
-                || (startPointPosition == PointPosition.OnPlane && endPointPosition == PointPosition.Inside)
-                || (startPointPosition == PointPosition.Inside && endPointPosition == PointPosition.OnPlane))
+                || (startPointPosition == PointPosition.OnEdge && endPointPosition == PointPosition.OnEdge)
+                || (startPointPosition == PointPosition.OnEdge && endPointPosition == PointPosition.Inside)
+                || (startPointPosition == PointPosition.Inside && endPointPosition == PointPosition.OnEdge))
             {
                 return LinePosition.InsideFully;
             }
 
             if ((startPointPosition == PointPosition.Outside && endPointPosition == PointPosition.Outside)
-                || (startPointPosition == PointPosition.OnPlane && endPointPosition == PointPosition.Outside)
-                || (startPointPosition == PointPosition.Outside && endPointPosition == PointPosition.OnPlane))
+                || (startPointPosition == PointPosition.OnEdge && endPointPosition == PointPosition.Outside)
+                || (startPointPosition == PointPosition.Outside && endPointPosition == PointPosition.OnEdge))
             {
                 return LinePosition.OutsideFully;
             }
