@@ -57,13 +57,12 @@
     <Compile Include="Extension\AffineTransformation.cs" />
     <Compile Include="Extension\PointOperations.cs" />
     <Compile Include="Extension\VectorOperations.cs" />
-    <Compile Include="Figure\Ellipse.cs" />
     <Compile Include="Figure\Edge2D.cs" />
-    <Compile Include="Figure\Polygon2D.cs" />
+    <Compile Include="Figure\FiguresFactory.cs" />
+    <Compile Include="Figure\MovablePolygon2D.cs" />
     <Compile Include="Figure\MoveDirection.cs" />
-    <Compile Include="Figure\Rectangle.cs" />
+    <Compile Include="Figure\Polygon2D.cs" />
     <Compile Include="Figure\RotateDirection.cs" />
-    <Compile Include="Figure\Trapeze.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,7 +76,10 @@
     <Compile Include="SDL2-CS\SDL2_image.cs" />
     <Compile Include="SDL2-CS\SDL2_mixer.cs" />
     <Compile Include="SDL2-CS\SDL2_ttf.cs" />
-    <Compile Include="Utils\Drawer.cs" />
+    <Compile Include="Drawer\IPolygonDrawer.cs" />
+    <Compile Include="Drawer\RoundPolygonDrawer.cs" />
+    <Compile Include="Drawer\SquarePolygonDrawer.cs" />
+    <Compile Include="Drawer\UniversalPolygonDrawer.cs" />
     <Compile Include="Window\SdlWindow.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

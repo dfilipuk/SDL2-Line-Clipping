@@ -2,55 +2,57 @@
 using System.Collections.Generic;
 using System.Drawing;
 using SdlApplication.Clipping;
+using SdlApplication.Drawer;
 using SdlApplication.Extension;
-using SDL2;
 
 namespace SdlApplication.Figure
 {
-    public abstract class Polygon2D
+    public class Polygon2D
     {
         private readonly double _precision = 0.00001;
-        private readonly int _moveStep = 5;
-        private readonly double _rotationStep = 2 * Math.PI / 30;
 
-        private Point _center;
-        private Point _minPoint;
-        private Point _maxPoint;
-        private double _rotationAngle;
+        private IPolygonDrawer _polygonDrawer;
 
         protected List<Edge2D> _edges;
         protected List<Point> _initialVertexes;
         protected Dictionary<int, List<double>> _normalInsideVectors;
 
-        public Polygon2D(int centerX, int centerY, double angle, int minX, int maxX, int minY, int maxY)
+        public IEnumerable<Edge2D> Edges
         {
-            _center = new Point(centerX, centerY);
-            _rotationAngle = angle;
-            _edges = new List<Edge2D>();
-            _initialVertexes = new List<Point>();
-            _normalInsideVectors = new Dictionary<int, List<double>>();
-            SetMovementBorders(minX, maxX, minY, maxY);
+            get
+            {
+                foreach (Edge2D edge in _edges)
+                {
+                    yield return edge;
+                }
+            }
         }
 
-        protected abstract void InitializeVertexes();
-
-        public virtual void Draw(IntPtr renderer)
+        public Polygon2D(List<Point> vertexes, IPolygonDrawer polygonDrawer)
         {
-            foreach (Edge2D edge in _edges)
+            _initialVertexes = vertexes;
+            _normalInsideVectors = new Dictionary<int, List<double>>();
+            _edges = new List<Edge2D>();
+            _polygonDrawer = polygonDrawer;
+
+            CalculateInitialEdges();
+        }
+
+        public void Draw(IntPtr renderer)
+        {
+            _polygonDrawer.Draw(renderer, _edges);
+        }
+
+        public void CalculateInitialEdges()
+        {
+            int vertexesCount = _initialVertexes.Count;
+            _normalInsideVectors.Clear();
+            _edges.Clear();
+
+            for (int i = 0; i < vertexesCount; i++)
             {
-                SDL.SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-
-                foreach (var line in edge.VisibleParts)
-                {
-                    SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
-                }
-
-                SDL.SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
-                foreach (var line in edge.NotVisibleParts)
-                {
-                    SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
-                }
+                int nextVertexInd = (i + 1) % vertexesCount;
+                _edges.Add(new Edge2D(_initialVertexes[i], _initialVertexes[nextVertexInd], i));
             }
         }
 
@@ -92,7 +94,7 @@ namespace SdlApplication.Figure
             }
         }
 
-        public void ClipByPolygon(Polygon2D polygon, ClippingType type)
+        public void ClipByPolygon(MovablePolygon2D polygon, ClippingType type)
         {
             foreach (Edge2D edge in _edges)
             {
@@ -180,14 +182,6 @@ namespace SdlApplication.Figure
             }
         }
 
-        public IEnumerable<Edge2D> Planes()
-        {
-            foreach (Edge2D edge in _edges)
-            {
-                yield return edge;
-            }
-        }
-
         public List<double> GetNormalInsideVectorForPlane(int planeIndex)
         {
             if (!_normalInsideVectors.ContainsKey(planeIndex))
@@ -196,86 +190,6 @@ namespace SdlApplication.Figure
             }
 
             return _normalInsideVectors[planeIndex];
-        }
-
-        public void CalculateCurrentPosition()
-        {
-            int vertexesCount = _initialVertexes.Count;
-            _normalInsideVectors.Clear();
-            _edges.Clear();
-
-            for (int i = 0; i < vertexesCount; i++)
-            {
-                int nextVertexInd = (i + 1) % vertexesCount;
-                Point start = _initialVertexes[i].RotateAndMove(_rotationAngle, _center);
-                Point end = _initialVertexes[nextVertexInd].RotateAndMove(_rotationAngle, _center);
-                _edges.Add(new Edge2D(start, end, i));
-            }
-        }
-
-        public void Rotate(RotateDirection direction)
-        {
-            switch (direction)
-            {
-                case RotateDirection.Right:
-                    _rotationAngle += _rotationStep / (2 * Math.PI);
-                    break;
-                case RotateDirection.Left:
-                    _rotationAngle -= _rotationStep / (2 * Math.PI);
-                    break;
-            }
-        }
-
-        public bool Move(MoveDirection direction)
-        {
-            switch (direction)
-            {
-                case MoveDirection.Up:
-                    return MoveTo(_center.X, _center.Y - _moveStep);
-                    break;
-                case MoveDirection.Right:
-                    return MoveTo(_center.X + _moveStep, _center.Y);
-                    break;
-                case MoveDirection.Down:
-                    return MoveTo(_center.X, _center.Y + _moveStep);
-                    break;
-                case MoveDirection.Left:
-                    return MoveTo(_center.X - _moveStep, _center.Y);
-                    break;
-                default:
-                    return false;
-            }
-        }
-
-        public bool MoveTo(int x, int y)
-        {
-            if (x >= _minPoint.X && x <= _maxPoint.X && y >= _minPoint.Y && y <= _maxPoint.Y)
-            {
-                _center.X = x;
-                _center.Y = y;
-                return true;
-            }
-
-            return false;
-        }
-
-        public void SetMovementBorders(int minX, int maxX, int minY, int maxY)
-        {
-            _minPoint = new Point
-            {
-                X = minX,
-                Y = minY
-            };
-            _maxPoint = new Point
-            {
-                X = maxX,
-                Y = maxY
-            };
-
-            _center.X = _center.X < minX ? minX : _center.X;
-            _center.X = _center.X > maxX ? maxX : _center.X;
-            _center.Y = _center.Y < minX ? minY : _center.Y;
-            _center.Y = _center.Y > maxX ? maxY : _center.Y;
         }
 
         private void CalculateNormalInsideVectorForPlane(int planeInd)

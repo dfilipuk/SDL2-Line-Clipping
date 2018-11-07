@@ -24,10 +24,10 @@ namespace SdlApplication.Window
         private bool _isTimerWork;
         private MoveDirection _trapezeMoveDirection;
         private MoveDirection _ellipseMoveDirection;
-        private Polygon2D _currentFigure;
-        private Polygon2D _rectangle;
-        private Polygon2D _trapeze;
-        private Polygon2D _ellipse;
+        private MovablePolygon2D _currentFigure;
+        private MovablePolygon2D _rectangle;
+        private MovablePolygon2D _trapeze;
+        private MovablePolygon2D _ellipse;
 
         public SdlWindow(string title, int screenWidth, int screenHeight)
         {
@@ -64,17 +64,17 @@ namespace SdlApplication.Window
             int width, height;
             SDL.SDL_GetWindowSize(_window, out width, out height);
 
-            _rectangle = new Rectangle(
+            _rectangle = FiguresFactory.CreateRectangle(
                 width / 2, height / 2, _defaultRotationAngle,
                 _offsetFromBorders, width - _offsetFromBorders, _offsetFromBorders, height - _offsetFromBorders,
                 width - 300, height - 300
             );
-            _trapeze = new Trapeze(
+            _trapeze = FiguresFactory.CreateTrapeze(
                 115, height / 2 + 15, _defaultRotationAngle,
                 _offsetFromBorders, width - _offsetFromBorders, _offsetFromBorders, height - _offsetFromBorders,
                 200, 100
             );
-            _ellipse = new Ellipse(
+            _ellipse = FiguresFactory.CreateEllipse(
                 width - 100, height / 2, _defaultRotationAngle,
                 _offsetFromBorders, width - _offsetFromBorders, _offsetFromBorders, height - _offsetFromBorders,
                 100, 57
@@ -113,7 +113,7 @@ namespace SdlApplication.Window
             SDL.SDL_GetWindowSize(_window, out width, out height);
 
 
-            _rectangle = new Rectangle(
+            _rectangle = FiguresFactory.CreateRectangle(
                 width / 2, height / 2, _defaultRotationAngle,
                 _offsetFromBorders, width - _offsetFromBorders, _offsetFromBorders, height - _offsetFromBorders,
                 width - 300, height - 300
@@ -249,8 +249,8 @@ namespace SdlApplication.Window
                     }
                 }
 
-                _trapeze.CalculateCurrentPosition();
-                _ellipse.CalculateCurrentPosition();
+                _trapeze.CalculateCurrentEdges();
+                _ellipse.CalculateCurrentEdges();
                 PerformClipping();
                 DrawFigures();
                 Thread.Sleep(_renderLoopTimeoutMs);
