@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using SdlApplication.Extension;
-using SdlApplication.Figure;
+using Clipping2D.Extension;
+using Clipping2D.Polygon;
 
-namespace SdlApplication.Clipping
+namespace Clipping2D.Clipping
 {
-    public class ClippingService
+    class ClippingService
     {
         private static readonly double _precision = 0.00001;
 
-        public static ClippingResult ClipLineByPolygon((Point Start, Point End) line, GenericFigure polygon)
+        public static ClippingResult ClipLineByPolygon((Point Start, Point End) line, Polygon2D polygon)
         {
             var result = new ClippingResult();
             List<double> lineVector = line.Start.VectorTo(line.End);
             bool crossingPointsExist = false;
 
-            foreach (FigurePlane plane in polygon.Planes())
+            foreach (Edge2D edge in polygon.Edges)
             {
                 if (result.Position != LinePosition.OutsideFully)
                 {
-                    List<double> insideNormalVector = polygon.GetNormalInsideVectorForPlane(plane.PlaneNumber);
-                    List<double> wVector = plane.Start.VectorTo(line.Start);
+                    List<double> insideNormalVector = polygon.GetNormalInsideVectorForPlane(edge.EdgeNumber);
+                    List<double> wVector = edge.Start.VectorTo(line.Start);
                     double q = insideNormalVector.ScalarMultiplicationWith(wVector);
                     double p = insideNormalVector.ScalarMultiplicationWith(lineVector);
 
@@ -37,7 +37,7 @@ namespace SdlApplication.Clipping
                         double t = -q / p;
                         var crossPoint = t.GetLinePoint(line);
 
-                        if (crossPoint.IsPointBelongToLine((plane.Start, plane.End)))
+                        if (crossPoint.IsPointBelongToLine((edge.Start, edge.End)))
                         {
                             if ((p < 0) && (t > result.t0) && (t < result.t1))
                             {
@@ -62,7 +62,7 @@ namespace SdlApplication.Clipping
             return result;
         }
 
-        private static LinePosition GetLinePosition((Point Start, Point End) line, GenericFigure polygon)
+        private static LinePosition GetLinePosition((Point Start, Point End) line, Polygon2D polygon)
         {
             PointPosition startPointPosition = polygon.GetPointPosition(line.Start);
             PointPosition endPointPosition = polygon.GetPointPosition(line.End);
