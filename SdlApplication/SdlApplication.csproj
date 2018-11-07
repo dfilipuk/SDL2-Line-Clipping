@@ -58,8 +58,8 @@
     <Compile Include="Extension\PointOperations.cs" />
     <Compile Include="Extension\VectorOperations.cs" />
     <Compile Include="Figure\Ellipse.cs" />
-    <Compile Include="Figure\FigurePlane.cs" />
-    <Compile Include="Figure\GenericFigure.cs" />
+    <Compile Include="Figure\Edge2D.cs" />
+    <Compile Include="Figure\Polygon2D.cs" />
     <Compile Include="Figure\MoveDirection.cs" />
     <Compile Include="Figure\Rectangle.cs" />
     <Compile Include="Figure\RotateDirection.cs" />

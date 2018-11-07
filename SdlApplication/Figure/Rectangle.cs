@@ -5,7 +5,7 @@ using SDL2;
 
 namespace SdlApplication.Figure
 {
-    public class Rectangle : GenericFigure
+    public class Rectangle : Polygon2D
     {
         private readonly int _width;
         private readonly int _height;
@@ -21,11 +21,11 @@ namespace SdlApplication.Figure
 
         public override void Draw(IntPtr renderer)
         {
-            foreach (FigurePlane plane in _planes)
+            foreach (Edge2D edge in _edges)
             {
                 SDL.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-                foreach (var line in plane.VisibleParts)
+                foreach (var line in edge.VisibleParts)
                 {
                     SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
                 }

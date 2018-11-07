@@ -4,7 +4,7 @@ using SDL2;
 
 namespace SdlApplication.Figure
 {
-    public class Ellipse : GenericFigure
+    public class Ellipse : Polygon2D
     {
         private readonly int _vertexesCount = 25;
         private readonly int _a;
@@ -23,21 +23,21 @@ namespace SdlApplication.Figure
         {
             bool drawCurrentNotVisiblePlane = true;
 
-            foreach (FigurePlane plane in _planes)
+            foreach (Edge2D edge in _edges)
             {
                 SDL.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-                foreach (var line in plane.VisibleParts)
+                foreach (var line in edge.VisibleParts)
                 {
                     SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
                     drawCurrentNotVisiblePlane = true;
                 }
 
-                if (plane.VisibleParts.Count == 0)
+                if (edge.VisibleParts.Count == 0)
                 {
                     if (drawCurrentNotVisiblePlane)
                     {
-                        foreach (var line in plane.NotVisibleParts)
+                        foreach (var line in edge.NotVisibleParts)
                         {
                             SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
                         }

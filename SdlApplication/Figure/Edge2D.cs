@@ -3,20 +3,20 @@ using System.Drawing;
 
 namespace SdlApplication.Figure
 {
-    public class FigurePlane
+    public class Edge2D
     {
-        public int PlaneNumber { get; }
+        public int EdgeNumber { get; }
         public Point Start { get; }
         public Point End { get; }
 
         public List<(Point Start, Point End)> VisibleParts { get; }
         public List<(Point Start, Point End)> NotVisibleParts { get; }
 
-        public FigurePlane(Point start, Point end, int number)
+        public Edge2D(Point start, Point end, int number)
         {
             Start = start;
             End = end;
-            PlaneNumber = number;
+            EdgeNumber = number;
             VisibleParts = new List<(Point Start, Point End)>();
             NotVisibleParts = new List<(Point Start, Point End)>();
             ResetClipping();

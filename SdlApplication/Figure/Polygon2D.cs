@@ -7,7 +7,7 @@ using SDL2;
 
 namespace SdlApplication.Figure
 {
-    public abstract class GenericFigure
+    public abstract class Polygon2D
     {
         private readonly double _precision = 0.00001;
         private readonly int _moveStep = 5;
@@ -18,15 +18,15 @@ namespace SdlApplication.Figure
         private Point _maxPoint;
         private double _rotationAngle;
 
-        protected List<FigurePlane> _planes;
+        protected List<Edge2D> _edges;
         protected List<Point> _initialVertexes;
         protected Dictionary<int, List<double>> _normalInsideVectors;
 
-        public GenericFigure(int centerX, int centerY, double angle, int minX, int maxX, int minY, int maxY)
+        public Polygon2D(int centerX, int centerY, double angle, int minX, int maxX, int minY, int maxY)
         {
             _center = new Point(centerX, centerY);
             _rotationAngle = angle;
-            _planes = new List<FigurePlane>();
+            _edges = new List<Edge2D>();
             _initialVertexes = new List<Point>();
             _normalInsideVectors = new Dictionary<int, List<double>>();
             SetMovementBorders(minX, maxX, minY, maxY);
@@ -36,18 +36,18 @@ namespace SdlApplication.Figure
 
         public virtual void Draw(IntPtr renderer)
         {
-            foreach (FigurePlane plane in _planes)
+            foreach (Edge2D edge in _edges)
             {
                 SDL.SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 
-                foreach (var line in plane.VisibleParts)
+                foreach (var line in edge.VisibleParts)
                 {
                     SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
                 }
 
                 SDL.SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-                foreach (var line in plane.NotVisibleParts)
+                foreach (var line in edge.NotVisibleParts)
                 {
                     SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
                 }
@@ -58,9 +58,9 @@ namespace SdlApplication.Figure
         {
             PointPosition result = PointPosition.Inside;
 
-            for (int i = 0; i < _planes.Count && result == PointPosition.Inside; i++)
+            for (int i = 0; i < _edges.Count && result == PointPosition.Inside; i++)
             {
-                var testVector = point.VectorTo(_planes[i].Start);
+                var testVector = point.VectorTo(_edges[i].Start);
                 var normalInsideVector = GetNormalInsideVectorForPlane(i);
                 double scalarMultiplication = testVector.ScalarMultiplicationWith(normalInsideVector);
 
@@ -70,7 +70,7 @@ namespace SdlApplication.Figure
                 }
                 else if (Math.Abs(scalarMultiplication) <= _precision)
                 {
-                    if (point.IsPointBelongToLine((_planes[i].Start, _planes[i].End)))
+                    if (point.IsPointBelongToLine((_edges[i].Start, _edges[i].End)))
                     {
                         result = PointPosition.OnPlane;
                     }
@@ -86,18 +86,18 @@ namespace SdlApplication.Figure
 
         public void ResetClipping()
         {
-            foreach (var plane in _planes)
+            foreach (var plane in _edges)
             {
                 plane.ResetClipping();
             }
         }
 
-        public void ClipByPolygon(GenericFigure polygon, ClippingType type)
+        public void ClipByPolygon(Polygon2D polygon, ClippingType type)
         {
-            foreach (FigurePlane plane in _planes)
+            foreach (Edge2D edge in _edges)
             {
-                var visibleParts = plane.VisibleParts.ToArray();
-                plane.VisibleParts.Clear();
+                var visibleParts = edge.VisibleParts.ToArray();
+                edge.VisibleParts.Clear();
 
                 foreach (var visiblePart in visibleParts)
                 {
@@ -107,22 +107,22 @@ namespace SdlApplication.Figure
                     {
                         if (type == ClippingType.Inside)
                         {
-                            plane.NotVisibleParts.Add(visiblePart);
+                            edge.NotVisibleParts.Add(visiblePart);
                         }
                         else if (type == ClippingType.External)
                         {
-                            plane.VisibleParts.Add(visiblePart);
+                            edge.VisibleParts.Add(visiblePart);
                         }
                     }
                     else if (result.Position == LinePosition.InsideFully)
                     {
                         if (type == ClippingType.Inside)
                         {
-                            plane.VisibleParts.Add(visiblePart);
+                            edge.VisibleParts.Add(visiblePart);
                         }
                         else if (type == ClippingType.External)
                         {
-                            plane.NotVisibleParts.Add(visiblePart);
+                            edge.NotVisibleParts.Add(visiblePart);
                         }
                     }
                     else if (result.Position == LinePosition.InsidePartial)
@@ -133,13 +133,13 @@ namespace SdlApplication.Figure
 
                             if (type == ClippingType.Inside)
                             {
-                                plane.VisibleParts.Add((visiblePart.Start, crossPoint));
-                                plane.NotVisibleParts.Add((crossPoint, visiblePart.End));
+                                edge.VisibleParts.Add((visiblePart.Start, crossPoint));
+                                edge.NotVisibleParts.Add((crossPoint, visiblePart.End));
                             }
                             else if (type == ClippingType.External)
                             {
-                                plane.NotVisibleParts.Add((visiblePart.Start, crossPoint));
-                                plane.VisibleParts.Add((crossPoint, visiblePart.End));
+                                edge.NotVisibleParts.Add((visiblePart.Start, crossPoint));
+                                edge.VisibleParts.Add((crossPoint, visiblePart.End));
                             }
                         }
                         else if ((result.t0 != 0) && (result.t1 == 1))
@@ -148,13 +148,13 @@ namespace SdlApplication.Figure
 
                             if (type == ClippingType.Inside)
                             {
-                                plane.VisibleParts.Add((crossPoint, visiblePart.End));
-                                plane.NotVisibleParts.Add((visiblePart.Start, crossPoint));
+                                edge.VisibleParts.Add((crossPoint, visiblePart.End));
+                                edge.NotVisibleParts.Add((visiblePart.Start, crossPoint));
                             }
                             else if (type == ClippingType.External)
                             {
-                                plane.NotVisibleParts.Add((crossPoint, visiblePart.End));
-                                plane.VisibleParts.Add((visiblePart.Start, crossPoint));
+                                edge.NotVisibleParts.Add((crossPoint, visiblePart.End));
+                                edge.VisibleParts.Add((visiblePart.Start, crossPoint));
                             }
                         }
                         else
@@ -164,15 +164,15 @@ namespace SdlApplication.Figure
 
                             if (type == ClippingType.Inside)
                             {
-                                plane.VisibleParts.Add((crossPoint1, crossPoint2));
-                                plane.NotVisibleParts.Add((visiblePart.Start, crossPoint1));
-                                plane.NotVisibleParts.Add((crossPoint2, visiblePart.End));
+                                edge.VisibleParts.Add((crossPoint1, crossPoint2));
+                                edge.NotVisibleParts.Add((visiblePart.Start, crossPoint1));
+                                edge.NotVisibleParts.Add((crossPoint2, visiblePart.End));
                             }
                             else if (type == ClippingType.External)
                             {
-                                plane.NotVisibleParts.Add((crossPoint1, crossPoint2));
-                                plane.VisibleParts.Add((visiblePart.Start, crossPoint1));
-                                plane.VisibleParts.Add((crossPoint2, visiblePart.End));
+                                edge.NotVisibleParts.Add((crossPoint1, crossPoint2));
+                                edge.VisibleParts.Add((visiblePart.Start, crossPoint1));
+                                edge.VisibleParts.Add((crossPoint2, visiblePart.End));
                             }
                         }
                     }
@@ -180,11 +180,11 @@ namespace SdlApplication.Figure
             }
         }
 
-        public IEnumerable<FigurePlane> Planes()
+        public IEnumerable<Edge2D> Planes()
         {
-            foreach (FigurePlane plane in _planes)
+            foreach (Edge2D edge in _edges)
             {
-                yield return plane;
+                yield return edge;
             }
         }
 
@@ -202,14 +202,14 @@ namespace SdlApplication.Figure
         {
             int vertexesCount = _initialVertexes.Count;
             _normalInsideVectors.Clear();
-            _planes.Clear();
+            _edges.Clear();
 
             for (int i = 0; i < vertexesCount; i++)
             {
                 int nextVertexInd = (i + 1) % vertexesCount;
                 Point start = _initialVertexes[i].RotateAndMove(_rotationAngle, _center);
                 Point end = _initialVertexes[nextVertexInd].RotateAndMove(_rotationAngle, _center);
-                _planes.Add(new FigurePlane(start, end, i));
+                _edges.Add(new Edge2D(start, end, i));
             }
         }
 
@@ -281,8 +281,8 @@ namespace SdlApplication.Figure
         private void CalculateNormalInsideVectorForPlane(int planeInd)
         {
             int nextPlaneId = (planeInd + 1) % _initialVertexes.Count;
-            List<double> planeVector = _planes[planeInd].Start.VectorTo(_planes[planeInd].End);
-            List<double> testVector = _planes[planeInd].Start.VectorTo(_planes[nextPlaneId].End);
+            List<double> planeVector = _edges[planeInd].Start.VectorTo(_edges[planeInd].End);
+            List<double> testVector = _edges[planeInd].Start.VectorTo(_edges[nextPlaneId].End);
             List<double> planeInsideNormalVector = new List<double>();
 
             if (planeVector[0] != 0)

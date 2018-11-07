@@ -24,10 +24,10 @@ namespace SdlApplication.Window
         private bool _isTimerWork;
         private MoveDirection _trapezeMoveDirection;
         private MoveDirection _ellipseMoveDirection;
-        private GenericFigure _currentFigure;
-        private GenericFigure _rectangle;
-        private GenericFigure _trapeze;
-        private GenericFigure _ellipse;
+        private Polygon2D _currentFigure;
+        private Polygon2D _rectangle;
+        private Polygon2D _trapeze;
+        private Polygon2D _ellipse;
 
         public SdlWindow(string title, int screenWidth, int screenHeight)
         {
