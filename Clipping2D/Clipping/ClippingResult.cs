@@ -1,6 +1,6 @@
-﻿namespace SdlApplication.Clipping
+﻿namespace Clipping2D.Clipping
 {
-    public class ClippingResult
+    class ClippingResult
     {
         public LinePosition Position { get; set; }
         public double t0 { get; set; }

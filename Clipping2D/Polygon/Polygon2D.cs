@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using SdlApplication.Clipping;
-using SdlApplication.Drawer;
-using SdlApplication.Extension;
+using Clipping2D.Clipping;
+using Clipping2D.Drawer;
+using Clipping2D.Extension;
 
-namespace SdlApplication.Figure
+namespace Clipping2D.Polygon
 {
     public class Polygon2D
     {
@@ -17,7 +17,7 @@ namespace SdlApplication.Figure
         protected List<Point> _initialVertexes;
         protected Dictionary<int, List<double>> _normalInsideVectors;
 
-        public IEnumerable<Edge2D> Edges
+        internal IEnumerable<Edge2D> Edges
         {
             get
             {
@@ -43,49 +43,6 @@ namespace SdlApplication.Figure
             _polygonDrawer.Draw(renderer, _edges);
         }
 
-        public void CalculateInitialEdges()
-        {
-            int vertexesCount = _initialVertexes.Count;
-            _normalInsideVectors.Clear();
-            _edges.Clear();
-
-            for (int i = 0; i < vertexesCount; i++)
-            {
-                int nextVertexInd = (i + 1) % vertexesCount;
-                _edges.Add(new Edge2D(_initialVertexes[i], _initialVertexes[nextVertexInd], i));
-            }
-        }
-
-        public PointPosition GetPointPosition(Point point)
-        {
-            PointPosition result = PointPosition.Inside;
-
-            for (int i = 0; i < _edges.Count && result == PointPosition.Inside; i++)
-            {
-                var testVector = point.VectorTo(_edges[i].Start);
-                var normalInsideVector = GetNormalInsideVectorForPlane(i);
-                double scalarMultiplication = testVector.ScalarMultiplicationWith(normalInsideVector);
-
-                if (scalarMultiplication > 0)
-                {
-                    result = PointPosition.Outside;
-                }
-                else if (Math.Abs(scalarMultiplication) <= _precision)
-                {
-                    if (point.IsPointBelongToLine((_edges[i].Start, _edges[i].End)))
-                    {
-                        result = PointPosition.OnPlane;
-                    }
-                    else
-                    {
-                        result = PointPosition.Outside;
-                    }
-                }
-            }
-
-            return result;
-        }
-
         public void ResetClipping()
         {
             foreach (var plane in _edges)
@@ -94,7 +51,7 @@ namespace SdlApplication.Figure
             }
         }
 
-        public void ClipByPolygon(MovablePolygon2D polygon, ClippingType type)
+        public void ClipByPolygon(Polygon2D polygon, ClippingType type)
         {
             foreach (Edge2D edge in _edges)
             {
@@ -182,7 +139,7 @@ namespace SdlApplication.Figure
             }
         }
 
-        public List<double> GetNormalInsideVectorForPlane(int planeIndex)
+        internal List<double> GetNormalInsideVectorForPlane(int planeIndex)
         {
             if (!_normalInsideVectors.ContainsKey(planeIndex))
             {
@@ -190,6 +147,49 @@ namespace SdlApplication.Figure
             }
 
             return _normalInsideVectors[planeIndex];
+        }
+
+        internal PointPosition GetPointPosition(Point point)
+        {
+            PointPosition result = PointPosition.Inside;
+
+            for (int i = 0; i < _edges.Count && result == PointPosition.Inside; i++)
+            {
+                var testVector = point.VectorTo(_edges[i].Start);
+                var normalInsideVector = GetNormalInsideVectorForPlane(i);
+                double scalarMultiplication = testVector.ScalarMultiplicationWith(normalInsideVector);
+
+                if (scalarMultiplication > 0)
+                {
+                    result = PointPosition.Outside;
+                }
+                else if (Math.Abs(scalarMultiplication) <= _precision)
+                {
+                    if (point.IsPointBelongToLine((_edges[i].Start, _edges[i].End)))
+                    {
+                        result = PointPosition.OnPlane;
+                    }
+                    else
+                    {
+                        result = PointPosition.Outside;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private void CalculateInitialEdges()
+        {
+            int vertexesCount = _initialVertexes.Count;
+            _normalInsideVectors.Clear();
+            _edges.Clear();
+
+            for (int i = 0; i < vertexesCount; i++)
+            {
+                int nextVertexInd = (i + 1) % vertexesCount;
+                _edges.Add(new Edge2D(_initialVertexes[i], _initialVertexes[nextVertexInd], i));
+            }
         }
 
         private void CalculateNormalInsideVectorForPlane(int planeInd)

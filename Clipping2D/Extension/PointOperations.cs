@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace SdlApplication.Extension
+namespace Clipping2D.Extension
 {
     public static class PointOperations
     {
