@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using SdlApplication.Extension;
-using SdlApplication.Figure;
+using Clipping2D.Extension;
+using Clipping2D.Polygon;
 
-namespace SdlApplication.Clipping
+namespace Clipping2D.Clipping
 {
-    public class ClippingService
+    class ClippingService
     {
         private static readonly double _precision = 0.00001;
 

@@ -1,4 +1,4 @@
-﻿namespace SdlApplication.Clipping
+﻿namespace Clipping2D.Clipping
 {
     public enum ClippingType
     {

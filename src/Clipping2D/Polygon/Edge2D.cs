@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
-namespace SdlApplication.Figure
+namespace Clipping2D.Polygon
 {
     public class Edge2D
     {

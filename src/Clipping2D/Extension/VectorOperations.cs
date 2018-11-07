@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace SdlApplication.Extension
+namespace Clipping2D.Extension
 {
     public static class VectorOperations
     {

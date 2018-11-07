@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using SdlApplication.Clipping;
+using Clipping2D.Clipping;
 using SdlApplication.Figure;
 using SDL2;
 

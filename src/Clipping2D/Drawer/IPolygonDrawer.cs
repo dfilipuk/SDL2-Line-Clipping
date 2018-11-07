@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using SdlApplication.Figure;
+using Clipping2D.Polygon;
 
-namespace SdlApplication.Drawer
+namespace Clipping2D.Drawer
 {
     public interface IPolygonDrawer
     {

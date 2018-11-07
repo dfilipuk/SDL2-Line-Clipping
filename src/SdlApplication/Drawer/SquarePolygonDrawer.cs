@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using SdlApplication.Extension;
-using SdlApplication.Figure;
+using Clipping2D.Drawer;
+using Clipping2D.Extension;
+using Clipping2D.Polygon;
 using SDL2;
 
 namespace SdlApplication.Drawer

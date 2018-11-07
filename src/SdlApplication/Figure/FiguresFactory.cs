@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Clipping2D.Drawer;
 using SdlApplication.Drawer;
 
 namespace SdlApplication.Figure
