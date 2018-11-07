@@ -16,7 +16,7 @@ namespace SdlApplication.Clipping
             List<double> lineVector = line.Start.VectorTo(line.End);
             bool crossingPointsExist = false;
 
-            foreach (Edge2D edge in polygon.Planes())
+            foreach (Edge2D edge in polygon.Edges)
             {
                 if (result.Position != LinePosition.OutsideFully)
                 {
