@@ -5,7 +5,7 @@ using SDL2;
 
 namespace SdlApplication.Figure
 {
-    public class Trapeze : GenericFigure
+    public class Trapeze : Polygon2D
     {
         private readonly int _dotLength = 10;
         private readonly int _width;
@@ -24,16 +24,16 @@ namespace SdlApplication.Figure
 
         public override void Draw(IntPtr renderer)
         {
-            foreach (FigurePlane plane in _planes)
+            foreach (Edge2D edge in _edges)
             {
                 SDL.SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-                foreach (var line in plane.VisibleParts)
+                foreach (var line in edge.VisibleParts)
                 {
                     SDL.SDL_RenderDrawLine(renderer, line.Start.X, line.Start.Y, line.End.X, line.End.Y);
                 }
 
-                foreach (var line in plane.NotVisibleParts)
+                foreach (var line in edge.NotVisibleParts)
                 {
                     _drawer.DrawDottledLine(renderer, line.Start, line.End, _dotLength);
                 }
