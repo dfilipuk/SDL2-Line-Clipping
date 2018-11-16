@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using Clipping2D.Clipping;
+using Clipping2D.Drawer;
+using SdlApplication.Drawer;
 using SdlApplication.Figure;
 using SDL2;
 
@@ -28,6 +30,9 @@ namespace SdlApplication.Window
         private MovablePolygon2D _rectangle;
         private MovablePolygon2D _trapeze;
         private MovablePolygon2D _ellipse;
+        private IPolygonDrawer _rectabgleDrawer;
+        private IPolygonDrawer _trapezeDrawer;
+        private IPolygonDrawer _ellipseDrawer;
 
         public SdlWindow(string title, int screenWidth, int screenHeight)
         {
@@ -36,6 +41,9 @@ namespace SdlApplication.Window
             _screenWidth = screenWidth;
             _trapezeMoveDirection = MoveDirection.Right;
             _ellipseMoveDirection = MoveDirection.Left;
+            _rectabgleDrawer = DrawerFactory.SquareDrawer;
+            _trapezeDrawer = DrawerFactory.SquareDrawer;
+            _ellipseDrawer = DrawerFactory.RoundDrawer;
         }
 
         public void Open()
@@ -231,7 +239,18 @@ namespace SdlApplication.Window
                             case SDL.SDL_Keycode.SDLK_2:
                                 _currentFigure = _ellipse;
                                 break;
-                        }
+                            case SDL.SDL_Keycode.SDLK_F1:
+                                _rectabgleDrawer = DrawerFactory.SquareDrawer;
+                                _trapezeDrawer = DrawerFactory.SquareDrawer;
+                                _ellipseDrawer = DrawerFactory.RoundDrawer;
+                                break;
+                            case SDL.SDL_Keycode.SDLK_F2:
+                                _rectabgleDrawer = DrawerFactory.UniversalDrawer;
+                                _trapezeDrawer = DrawerFactory.UniversalDrawer;
+                                _ellipseDrawer = DrawerFactory.UniversalDrawer;
+                                break;
+
+                            }
 
                         break;
                     }
@@ -268,9 +287,9 @@ namespace SdlApplication.Window
             SDL.SDL_RenderClear(_renderer);
             SDL.SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
 
-            _rectangle.Draw(_renderer);
-            _trapeze.Draw(_renderer);
-            _ellipse.Draw(_renderer);
+            _rectangle.Draw(_renderer, _rectabgleDrawer);
+            _trapeze.Draw(_renderer, _trapezeDrawer);
+            _ellipse.Draw(_renderer, _ellipseDrawer);
 
             SDL.SDL_RenderPresent(_renderer);
         }

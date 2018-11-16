@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Drawer\DrawerFactory.cs" />
     <Compile Include="Extension\AffineTransformation.cs" />
     <Compile Include="Figure\FiguresFactory.cs" />
     <Compile Include="Figure\MovablePolygon2D.cs" />

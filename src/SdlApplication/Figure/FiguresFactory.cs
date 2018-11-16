@@ -53,8 +53,7 @@ namespace SdlApplication.Figure
                 },
             });
 
-            return new MovablePolygon2D(vertexes, _rectangeDrawer, centerX, centerY, angle, minX, maxX, minY,
-                maxY);
+            return new MovablePolygon2D(vertexes, centerX, centerY, angle, minX, maxX, minY, maxY);
         }
 
         public static MovablePolygon2D CreateTrapeze(int centerX, int centerY, double angle, int minX, int maxX,
@@ -88,8 +87,7 @@ namespace SdlApplication.Figure
                 },
             });
 
-            return new MovablePolygon2D(vertexes, _trapezeDrawer, centerX, centerY, angle, minX, maxX, minY,
-                maxY);
+            return new MovablePolygon2D(vertexes, centerX, centerY, angle, minX, maxX, minY, maxY);
         }
 
         public static MovablePolygon2D CreateEllipse(int centerX, int centerY, double angle, int minX, int maxX, int minY, int maxY, int a, int b)
@@ -107,8 +105,7 @@ namespace SdlApplication.Figure
                 });
             }
 
-            return new MovablePolygon2D(vertexes, _ellipseDrawer, centerX, centerY, angle, minX, maxX, minY,
-                maxY);
+            return new MovablePolygon2D(vertexes, centerX, centerY, angle, minX, maxX, minY, maxY);
         }
     }
 }

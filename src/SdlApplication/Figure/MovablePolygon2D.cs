@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Clipping2D.Drawer;
 using Clipping2D.Polygon;
 using SdlApplication.Extension;
 
@@ -17,8 +16,8 @@ namespace SdlApplication.Figure
         private Point _maxPoint;
         private double _rotationAngle;
 
-        public MovablePolygon2D(List<Point> vertexes, IPolygonDrawer polygonDrawer, 
-            int centerX, int centerY, double angle, int minX, int maxX, int minY, int maxY) : base(vertexes, polygonDrawer)
+        public MovablePolygon2D(List<Point> vertexes, int centerX, int centerY, double angle, 
+            int minX, int maxX, int minY, int maxY) : base(vertexes)
         {
             _center = new Point(centerX, centerY);
             _rotationAngle = angle;
@@ -60,16 +59,12 @@ namespace SdlApplication.Figure
             {
                 case MoveDirection.Up:
                     return MoveTo(_center.X, _center.Y - _moveStep);
-                    break;
                 case MoveDirection.Right:
                     return MoveTo(_center.X + _moveStep, _center.Y);
-                    break;
                 case MoveDirection.Down:
                     return MoveTo(_center.X, _center.Y + _moveStep);
-                    break;
                 case MoveDirection.Left:
                     return MoveTo(_center.X - _moveStep, _center.Y);
-                    break;
                 default:
                     return false;
             }
