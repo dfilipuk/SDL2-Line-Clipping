@@ -1,26 +1,12 @@
-﻿//#define CLIPPING_DEBUG
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Clipping2D.Drawer;
-using SdlApplication.Drawer;
 
 namespace SdlApplication.Figure
 {
     public static class FiguresFactory
     {
         private static readonly int _ellipseVertexesCount = 25;
-
-#if CLIPPING_DEBUG
-        private static readonly IPolygonDrawer _rectangeDrawer = new UniversalPolygonDrawer();
-        private static readonly IPolygonDrawer _trapezeDrawer = new UniversalPolygonDrawer();
-        private static readonly IPolygonDrawer _ellipseDrawer = new UniversalPolygonDrawer();
-#else
-        private static readonly IPolygonDrawer _rectangeDrawer = new SquarePolygonDrawer();
-        private static readonly IPolygonDrawer _trapezeDrawer = new SquarePolygonDrawer();
-        private static readonly IPolygonDrawer _ellipseDrawer = new RoundPolygonDrawer();
-#endif
 
         public static MovablePolygon2D CreateRectangle(int centerX, int centerY, double angle, int minX, int maxX,
             int minY, int maxY, int width, int height)
