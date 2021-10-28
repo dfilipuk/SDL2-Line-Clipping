@@ -1,5 +1,5 @@
 # Cyrus-Beck line clipping algorithm
-![Cyrus-Beck line clipping algorithm demo](https://raw.githubusercontent.com/Kupilif/SDL2-Line-Clipping/master/LineClipping.GIF)
+![Cyrus-Beck line clipping algorithm demo](./LineClipping.GIF)
 ## Control
 - `F1, F2` — Set drawing mode
 - `SPACE` — Enable / disable animation
